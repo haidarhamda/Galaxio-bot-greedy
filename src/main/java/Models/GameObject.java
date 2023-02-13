@@ -9,6 +9,7 @@ public class GameObject {
   public Integer speed;
   public Integer currentHeading;
   public Position position;
+  public Integer radius;
   public ObjectTypes gameObjectType;
 
   public GameObject(UUID id, Integer size, Integer speed, Integer currentHeading, Position position, ObjectTypes gameObjectType) {
@@ -18,6 +19,12 @@ public class GameObject {
     this.currentHeading = currentHeading;
     this.position = position;
     this.gameObjectType = gameObjectType;
+    this.radius=300;
+  }
+  public GameObject() {
+    this.position.x = 0;
+    this.position.y=0;
+    this.radius=300;
   }
 
   public UUID getId() {
@@ -47,6 +54,7 @@ public class GameObject {
   public Position getPosition() {
     return position;
   }
+  public Integer getRadius(){return radius;}
 
   public void setPosition(Position position) {
     this.position = position;
