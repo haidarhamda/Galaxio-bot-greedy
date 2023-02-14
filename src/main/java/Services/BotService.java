@@ -14,6 +14,7 @@ public class BotService {
     private PlayerAction playerAction;
     private GameState gameState;
     private GameObject target;
+    private GameObject center=new GameObject(UUID.randomUUID(),1,0,0,new Position(),ObjectTypes.CENTER);
 
     public BotService() {
         this.playerAction = new PlayerAction();
@@ -43,6 +44,7 @@ public class BotService {
 
         if (!gameState.getGameObjects().isEmpty()) {
             target=nearestObject(ObjectTypes.FOOD);
+
             var objectInside=getGameObjectInside();
             var objectInFront=getGameObjectInsideFront();
 
@@ -50,16 +52,19 @@ public class BotService {
                 target=getNearestInFront(objectInFront,ObjectTypes.SUPERFOOD);
             }
 
-            playerAction.heading=getHeadingBetween(target);
 
-            if (cekBound()){updateHeading(45);}
+
+            if (cekBound()){updateHeadingToCenter();}
 
             if (getDistanceBetween(bot,getNearestOtherBot())<bot.getRadius()){
                 runOrFight();
             }
+            playerAction.heading=getHeadingBetween(target);
             if (cekTorpedo(objectInside)){
                 updateHeading(45);
             }
+
+
 //            if (getDistanceBetween(bot,getNearestOtherBot())<bot.getRadius()){
 //                playerAction.heading=getHeadingBetween(target);
 //            }
@@ -115,7 +120,7 @@ public class BotService {
         } else {return null;}
     }
     public void runOrFight(){
-        if (getBot().getSize()>getNearestOtherBot().getSize()){
+        if (getNearestOtherBot()!=null&&getBot().getSize()>getNearestOtherBot().getSize()){
             //pewpew
             piwpiw();
         } else {
@@ -123,6 +128,7 @@ public class BotService {
         }
     }
     public void run(){
+        target=nearestObject(ObjectTypes.FOOD);
         updateHeading(45);
         if (bot.getSize()>10){
             playerAction.setAction(PlayerActions.START_AFTERBURNER);
@@ -134,7 +140,9 @@ public class BotService {
     }
     public void piwpiw(){
         target=getNearestOtherBot();
-        playerAction.setAction(PlayerActions.FIRETORPEDOES);
+        if (target!=null){
+        playerAction.heading=getHeadingBetween(target);
+        playerAction.setAction(PlayerActions.FIRETORPEDOES);}
     }
     public double getDistancetoBound(){
         double boundX=gameState.getWorld().getRadius()*cos(playerAction.getHeading());
@@ -158,17 +166,17 @@ public class BotService {
         }
         return false;
     }
-    public GameObject getNearestOtherBot(){
+    private GameObject getNearestOtherBot(){
         return gameState.getPlayerGameObjects()
                 .stream().filter(item -> item.id != this.bot.id)
                 .sorted(Comparator
                         .comparing(item -> getDistanceBetween(bot, item)))
                 .collect(Collectors.toList()).get(0);
     }
-    public boolean cekFront(GameObject gameObject){
+    private boolean cekFront(GameObject gameObject){
         return getHeadingBetween(gameObject)<30 &&getHeadingBetween(gameObject)>-30;
     }
-    public List<GameObject> getGameObjectInsideFront(){
+    private List<GameObject> getGameObjectInsideFront(){
         List<GameObject> objects=gameState.gameObjects.stream()
                 .filter(item->cekFront(item)&&getDistanceBetween(bot,item)<bot.radius/2).collect(Collectors.toList());
         return objects;
@@ -182,7 +190,7 @@ public class BotService {
         }
         return false;
     }
-    public GameObject getNearestInFront(List<GameObject> gameObjectList, ObjectTypes objectTypes){
+    private GameObject getNearestInFront(List<GameObject> gameObjectList, ObjectTypes objectTypes){
         if (!gameObjectList.isEmpty()){
             var foodList = gameObjectList
                     .stream().filter(item -> item.getGameObjectType() == objectTypes)
@@ -192,7 +200,7 @@ public class BotService {
             return foodList.get(0);
         } else {return null;}
     }
-    public boolean cekTorpedo(List<GameObject> gameObjectList){
+    private boolean cekTorpedo(List<GameObject> gameObjectList){
         if (cekInside(gameObjectList,ObjectTypes.TORPEDO_SALVO)){
             System.out.println(nearestObject(ObjectTypes.TORPEDO_SALVO).currentHeading);
             System.out.println(getHeadingBetween(nearestObject(ObjectTypes.TORPEDO_SALVO),bot));
@@ -208,5 +216,8 @@ public class BotService {
         }else {
             playerAction.heading-=degree;
         }
+    }
+    private void updateHeadingToCenter(){
+        playerAction.heading=getHeadingBetween(bot,center);
     }
 }

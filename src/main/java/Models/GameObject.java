@@ -21,11 +21,6 @@ public class GameObject {
     this.gameObjectType = gameObjectType;
     this.radius=300;
   }
-  public GameObject() {
-    this.position.x = 0;
-    this.position.y=0;
-    this.radius=300;
-  }
 
   public UUID getId() {
     return id;
