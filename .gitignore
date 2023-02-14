@@ -372,3 +372,5 @@ FodyWeavers.xsd
 PythonBot/venv/
 
 **/.cmake_build/
+
+/.idea/
