@@ -27,65 +27,173 @@ public class Fetch{
         bot=newBot;
         gameState=newGameState;
         playerAction=PlayerActions.FORWARD;
-        heading=selectTarget();
+        heading=decideNewHeading();
     }
 
-    public static int selectTarget(){
-        if (!gameState.getGameObjects().isEmpty()) {
-            var objectInside = getGameObjectInside();
-            var objectInFront = getGameObjectInsideFront();
-            var nearestFood = nearestObject(ObjectTypes.FOOD);
-
-            var target = nearestFood;
-            var distanceToNearestFood = getDistanceBetween(bot, nearestObject(ObjectTypes.FOOD));
-            var distanceToNearestGas = getDistanceBetween(bot, nearestObject(ObjectTypes.GAS_CLOUD));
-            var distanceToAsteroidField = getDistanceBetween(bot, nearestObject(ObjectTypes.ASTEROID_FIELD));
-            if (cekInside(gameState.getGameObjects(), ObjectTypes.GAS_CLOUD)) {
-                var nearestGasCloud = nearestObject(ObjectTypes.GAS_CLOUD);
-                if (checkCollision(bot, nearestFood, nearestGasCloud)) {
-                    var foodNotCollidingGas = NotCollidingObjects(ObjectTypes.FOOD, nearestGasCloud);
-                    if (foodNotCollidingGas != null) {
-                        nearestFood = foodNotCollidingGas.get(0);
-                        if (cekInside(gameState.getGameObjects(), ObjectTypes.ASTEROID_FIELD)) {
-                            var nearestAsteroid = nearestObject(ObjectTypes.ASTEROID_FIELD);
-                            if (checkCollision(bot, nearestFood, nearestAsteroid)) {
-                                var foodNotCollidingAsteroid = NotCollidingObjects(ObjectTypes.FOOD, nearestGasCloud);
-                                if (foodNotCollidingAsteroid != null) {
-                                    nearestFood = foodNotCollidingAsteroid.get(0);
-                                }
-                            }
-                        }
-                    }
+//    public static int selectTarget(){
+//        if (!gameState.getGameObjects().isEmpty()) {
+//            var objectInside = getGameObjectInside();
+//            var objectInFront = getGameObjectInsideFront();
+//            var nearestFood = nearestObject(ObjectTypes.FOOD);
+//
+//            var target = nearestFood;
+//            var distanceToNearestFood = getDistanceBetween(bot, nearestObject(ObjectTypes.FOOD));
+//            var distanceToNearestGas = getDistanceBetween(bot, nearestObject(ObjectTypes.GAS_CLOUD));
+//            var distanceToAsteroidField = getDistanceBetween(bot, nearestObject(ObjectTypes.ASTEROID_FIELD));
+//            if (cekInside(gameState.getGameObjects(), ObjectTypes.GAS_CLOUD)) {
+//                var nearestGasCloud = nearestObject(ObjectTypes.GAS_CLOUD);
+//                if (checkCollision(bot, nearestFood, nearestGasCloud)) {
+//                    var foodNotCollidingGas = NotCollidingObjects(ObjectTypes.FOOD, nearestGasCloud);
+//                    if (foodNotCollidingGas != null) {
+//                        nearestFood = foodNotCollidingGas.get(0);
+//                        if (cekInside(gameState.getGameObjects(), ObjectTypes.ASTEROID_FIELD)) {
+//                            var nearestAsteroid = nearestObject(ObjectTypes.ASTEROID_FIELD);
+//                            if (checkCollision(bot, nearestFood, nearestAsteroid)) {
+//                                var foodNotCollidingAsteroid = NotCollidingObjects(ObjectTypes.FOOD, nearestGasCloud);
+//                                if (foodNotCollidingAsteroid != null) {
+//                                    nearestFood = foodNotCollidingAsteroid.get(0);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//            if (cekInside(gameState.getGameObjects(), ObjectTypes.SUPERFOOD)) {
+//                var nearestSuperFood = nearestObject(ObjectTypes.SUPERFOOD);
+//                if (cekInside(gameState.getGameObjects(), ObjectTypes.GAS_CLOUD)) {
+//                    var nearestGasCloud = nearestObject(ObjectTypes.GAS_CLOUD);
+//                    if (checkCollision(bot, nearestSuperFood, nearestGasCloud)) {
+//                        var foodNotCollidingGas = NotCollidingObjects(ObjectTypes.SUPERFOOD, nearestGasCloud);
+//                        if (foodNotCollidingGas != null) {
+//                            nearestSuperFood = foodNotCollidingGas.get(0);
+//                            if (cekInside(gameState.getGameObjects(), ObjectTypes.ASTEROID_FIELD)) {
+//                                var nearestAsteroid = nearestObject(ObjectTypes.ASTEROID_FIELD);
+//                                if (checkCollision(bot, nearestSuperFood, nearestAsteroid)) {
+//                                    var foodNotCollidingAsteroid = NotCollidingObjects(ObjectTypes.SUPERFOOD, nearestGasCloud);
+//                                    if (foodNotCollidingAsteroid != null) {
+//                                        nearestSuperFood = foodNotCollidingAsteroid.get(0);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                if (getDistanceBetween(bot, nearestSuperFood) * 0.7 < getDistanceBetween(bot, nearestFood)) {
+//                    target = nearestSuperFood;
+//                }
+//            }
+//            return getHeadingBetween(target);
+//        }
+//        else return 0;
+//    }
+    private static GameObject getBestWeight(List<GameObject> gameObjectList){
+        var p=gameObjectList.get(0);
+        for (int i=0;i<gameObjectList.size();i++){
+            if (i==1){
+                if (getDistanceBetween(bot,p)>getDistanceBetween(bot,gameObjectList.get(i))*1.5){
+                    p=gameObjectList.get(i);
+                }
+            } else if (i==2){
+                if (getDistanceBetween(bot,p)>getDistanceBetween(bot,gameObjectList.get(i))*2){
+                    p=gameObjectList.get(i);
                 }
             }
-
-            if (cekInside(gameState.getGameObjects(), ObjectTypes.SUPERFOOD)) {
+        }
+        return p;
+    }
+    public static int decideNewHeading(){
+        var bestFood=selectTarget(ObjectTypes.FOOD);
+        var bestSuperFood=selectTarget(ObjectTypes.SUPERFOOD);
+        if (bestSuperFood!=null) {
+            if (getDistanceBetween(bot, bestSuperFood) * 0.7 <= getDistanceBetween(bot, bestFood)) {
+                return getHeadingBetween(bestSuperFood);
+            } else {
+                return getHeadingBetween(bestFood);
+            }
+        } else {
+            return getHeadingBetween(bestFood);
+        }
+    }
+    public static GameObject selectTarget(ObjectTypes objectTypes){
+        if (!gameState.getGameObjects().isEmpty()) {
+            if (cekInside(gameState.getGameObjects(), objectTypes)) {
+                var nearestFood = nearestObject(objectTypes);
                 var nearestSuperFood = nearestObject(ObjectTypes.SUPERFOOD);
+                var target = nearestFood;
                 if (cekInside(gameState.getGameObjects(), ObjectTypes.GAS_CLOUD)) {
-                    var nearestGasCloud = nearestObject(ObjectTypes.GAS_CLOUD);
-                    if (checkCollision(bot, nearestSuperFood, nearestGasCloud)) {
-                        var foodNotCollidingGas = NotCollidingObjects(ObjectTypes.SUPERFOOD, nearestGasCloud);
-                        if (foodNotCollidingGas != null) {
-                            nearestSuperFood = foodNotCollidingGas.get(0);
-                            if (cekInside(gameState.getGameObjects(), ObjectTypes.ASTEROID_FIELD)) {
-                                var nearestAsteroid = nearestObject(ObjectTypes.ASTEROID_FIELD);
-                                if (checkCollision(bot, nearestSuperFood, nearestAsteroid)) {
-                                    var foodNotCollidingAsteroid = NotCollidingObjects(ObjectTypes.SUPERFOOD, nearestGasCloud);
-                                    if (foodNotCollidingAsteroid != null) {
-                                        nearestSuperFood = foodNotCollidingAsteroid.get(0);
+                    var nearestFoodNotCollidingGas = NotCollidingObjects(objectTypes, nearestObject(ObjectTypes.GAS_CLOUD));
+                    if (cekInside(gameState.getGameObjects(), ObjectTypes.ASTEROID_FIELD)) {
+                        var nearestFoodNotCollidingAsteroid = NotCollidingObjects(objectTypes, nearestObject(ObjectTypes.ASTEROID_FIELD));
+                        if (nearestFoodNotCollidingAsteroid != null) {
+                            if (nearestFoodNotCollidingGas != null) {
+                                List<GameObject> l1 = new ArrayList<GameObject>() {{
+                                    add(nearestFood);
+                                    add(nearestFoodNotCollidingAsteroid.get(0));
+                                    add(nearestFoodNotCollidingGas.get(0));
+                                }};
+                                return getBestWeight(l1);
+                            } else {
+                                if (checkCollision(bot, nearestFood, nearestObject(ObjectTypes.ASTEROID_FIELD))) {
+                                    if (getDistanceBetween(bot, nearestFood) * 1.5 < getDistanceBetween(bot, nearestFoodNotCollidingAsteroid.get(0))) {
+                                        return nearestFoodNotCollidingAsteroid.get(0);
+                                    } else {
+                                        return nearestFood;
+                                    }
+                                } else {
+                                    return nearestFood;
+                                }
+                            }
+                        } else {
+                            if (nearestFoodNotCollidingGas != null) {
+                                if (checkCollision(bot, nearestFood, nearestObject(ObjectTypes.GAS_CLOUD))) {
+                                    if (getDistanceBetween(bot, nearestFood) * 2 < getDistanceBetween(bot, nearestFoodNotCollidingGas.get(0))) {
+                                        return nearestFood;
+                                    } else {
+                                        return nearestFoodNotCollidingGas.get(0);
                                     }
                                 }
+                                else {return nearestFood;}
+                            } else {
+                                return nearestFood;
                             }
                         }
+                    } else {
+                        if (nearestFoodNotCollidingGas != null) {
+                            if (checkCollision(bot, nearestFood, nearestObject(ObjectTypes.GAS_CLOUD))) {
+                                if (getDistanceBetween(bot, nearestFood) * 2 < getDistanceBetween(bot, nearestFoodNotCollidingGas.get(0))) {
+                                    return nearestFood;
+                                } else {
+                                    return nearestFoodNotCollidingGas.get(0);
+                                }
+                            }
+                            else {return nearestFood;}
+                        } else {
+                            return nearestFood;
+                        }
                     }
-                }
-                if (getDistanceBetween(bot, nearestSuperFood) * 0.7 < getDistanceBetween(bot, nearestFood)) {
-                    target = nearestSuperFood;
+                } else if (cekInside(gameState.getGameObjects(), ObjectTypes.ASTEROID_FIELD)) {
+                    var nearestFoodNotCollidingAsteroid = NotCollidingObjects(objectTypes, nearestObject(ObjectTypes.ASTEROID_FIELD));
+                    if (nearestFoodNotCollidingAsteroid != null) {
+                        if (checkCollision(bot, nearestFood, nearestObject(ObjectTypes.ASTEROID_FIELD))) {
+                            if (getDistanceBetween(bot, nearestFood) * 1.5 < getDistanceBetween(bot, nearestFoodNotCollidingAsteroid.get(0))) {
+                                return nearestFoodNotCollidingAsteroid.get(0);
+                            } else {
+                                return nearestFood;
+                            }
+                        } else {
+                            return nearestFood;
+                        }
+                    } else {
+                        return nearestFood;
+                    }
+                } else {
+                    return nearestFood;
                 }
             }
-            return getHeadingBetween(target);
+            else {return null;}
         }
-        else return 0;
+        else {return null;}
     }
     private static boolean checkCollision(GameObject bot,GameObject makan, GameObject debuff){
         var x1=bot.getPosition().getX();
@@ -111,7 +219,7 @@ public class Fetch{
             var list = gameState.getGameObjects()
                     .stream().filter(item -> item.getGameObjectType() == objectTypes &&
                             !checkCollision(bot,item,debuff)
-                    && !cekBound(getHeadingBetween(item)))
+                            && !cekBound(getHeadingBetween(item)))
                     .sorted(Comparator
                             .comparing(item -> getDistanceBetween(bot, item)))
                     .collect(Collectors.toList());
