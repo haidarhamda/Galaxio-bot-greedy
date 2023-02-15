@@ -2,6 +2,7 @@ package Services;
 
 import Enums.*;
 import Models.*;
+import Services.Fetch;
 
 import java.util.*;
 import java.util.stream.*;
@@ -14,6 +15,7 @@ public class BotService {
     private PlayerAction playerAction;
     private GameState gameState;
     private GameObject target;
+    private boolean headingBound=false;
     private GameObject center=new GameObject(UUID.randomUUID(),1,0,0,new Position(),ObjectTypes.CENTER);
 
     public BotService() {
@@ -43,34 +45,45 @@ public class BotService {
         playerAction.heading = new Random().nextInt(360);
 
         if (!gameState.getGameObjects().isEmpty()) {
-            target=nearestObject(ObjectTypes.FOOD);
-
-            var objectInside=getGameObjectInside();
-            var objectInFront=getGameObjectInsideFront();
-
-            if (cekInsideFront(objectInFront,ObjectTypes.SUPERFOOD)){
-                target=getNearestInFront(objectInFront,ObjectTypes.SUPERFOOD);
+            if (cekBound()) {
+                updateHeadingToCenter();
+                headingBound = true;
+            } else {
+                if (getDistancetoRearBound()>bot.getSize()+50) {
+                    headingBound = false;
+                }
             }
+            if (!headingBound) {
+//                target = nearestObject(ObjectTypes.FOOD);
 
+                var objectInside = getGameObjectInside();
+                var objectInFront = getGameObjectInsideFront();
 
+//                if (cekInsideFront(objectInFront, ObjectTypes.SUPERFOOD)) {
+//                    target = getNearestInFront(objectInFront, ObjectTypes.SUPERFOOD);
+//                }
 
-            if (cekBound()){updateHeadingToCenter();}
+                Fetch fetch=new Fetch();
+                fetch.setAction(bot, gameState);
+                playerAction.heading=fetch.getHeading();
+                System.out.println(playerAction.heading);
 
-            if (getDistanceBetween(bot,getNearestOtherBot())<bot.getRadius()){
-                runOrFight();
-            }
-            playerAction.heading=getHeadingBetween(target);
-            if (cekTorpedo(objectInside)){
-                updateHeading(45);
-            }
+//                if (getDistanceBetween(bot, getNearestOtherBot()) < bot.getRadius()) {
+//                    runOrFight();
+//                }
+//                playerAction.heading = getHeadingBetween(target);
+//                if (cekTorpedo(objectInside)) {
+//                    updateHeading(45);
+//                }
 
 
 //            if (getDistanceBetween(bot,getNearestOtherBot())<bot.getRadius()){
 //                playerAction.heading=getHeadingBetween(target);
 //            }
 
+            }
         }
-
+//        System.out.println(target.gameObjectType);
         this.playerAction = playerAction;
     }
 
@@ -144,6 +157,12 @@ public class BotService {
         playerAction.heading=getHeadingBetween(target);
         playerAction.setAction(PlayerActions.FIRETORPEDOES);}
     }
+    public double getDistancetoRearBound(){
+        double boundX=gameState.getWorld().getRadius()*cos(playerAction.getHeading()+180);
+        double boundY=gameState.getWorld().getRadius()*sin(playerAction.getHeading()+180);
+        double distance=sqrt(pow(boundX-bot.getPosition().getX(),2)+pow(boundY-bot.getPosition().getY(),2));
+        return distance;
+    }
     public double getDistancetoBound(){
         double boundX=gameState.getWorld().getRadius()*cos(playerAction.getHeading());
         double boundY=gameState.getWorld().getRadius()*sin(playerAction.getHeading());
@@ -151,7 +170,7 @@ public class BotService {
         return distance;
     }
     public boolean cekBound(){
-        return getDistancetoBound()<bot.getRadius()*bot.getSize()*0.2;
+        return getDistancetoBound()<bot.getSize()+50;
     }
     public List<GameObject> getGameObjectInside(){
         List<GameObject> objects=gameState.gameObjects.stream()

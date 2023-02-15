@@ -13,42 +13,79 @@ public class Fetch{
 
     private static GameObject bot;
     private static GameState gameState;
+    private static GameObject newTarget;
 
     public static PlayerActions playerAction;
     public static int heading;
-    public static void setAction(GameObject newBot,GameState newGameState){
+    public int getHeading(){return heading;}
+
+    public PlayerActions getPlayerAction() {
+        return playerAction;
+    }
+
+    public static void setAction(GameObject newBot, GameState newGameState){
         bot=newBot;
         gameState=newGameState;
         playerAction=PlayerActions.FORWARD;
         heading=selectTarget();
     }
+
     public static int selectTarget(){
-        var objectInside=getGameObjectInside();
-        var objectInFront=getGameObjectInsideFront();
-        var nearestFood=nearestObject(ObjectTypes.FOOD);
-        var target=nearestFood;
-        var distanceToNearestFood=getDistanceBetween(bot,nearestObject(ObjectTypes.FOOD));
-        var distanceToNearestGas=getDistanceBetween(bot,nearestObject(ObjectTypes.GAS_CLOUD));
-        var distanceToAsteroidField=getDistanceBetween(bot,nearestObject(ObjectTypes.ASTEROID_FIELD));
-        if (cekInside(gameState.getGameObjects(),ObjectTypes.GAS_CLOUD)){
-            var nearestGasCloud=nearestObject(ObjectTypes.GAS_CLOUD);
-            if(checkCollision(bot,nearestFood,nearestGasCloud)){
-                var foodNotCollidingGas=NotCollidingObjects(ObjectTypes.FOOD,nearestGasCloud);
-                if (foodNotCollidingGas!=null) {
-                    nearestFood = foodNotCollidingGas.get(0);
-                    if (cekInside(gameState.getGameObjects(), ObjectTypes.ASTEROID_FIELD)) {
-                        var nearestAsteroid = nearestObject(ObjectTypes.ASTEROID_FIELD);
-                        if (checkCollision(bot,nearestFood,nearestAsteroid)){
-                            var foodNotCollidingAsteroid=NotCollidingObjects(ObjectTypes.FOOD,nearestGasCloud);
-                            if (foodNotCollidingAsteroid!=null){
-                                nearestFood=foodNotCollidingAsteroid.get(0);
+        if (!gameState.getGameObjects().isEmpty()) {
+            var objectInside = getGameObjectInside();
+            var objectInFront = getGameObjectInsideFront();
+            var nearestFood = nearestObject(ObjectTypes.FOOD);
+
+            var target = nearestFood;
+            var distanceToNearestFood = getDistanceBetween(bot, nearestObject(ObjectTypes.FOOD));
+            var distanceToNearestGas = getDistanceBetween(bot, nearestObject(ObjectTypes.GAS_CLOUD));
+            var distanceToAsteroidField = getDistanceBetween(bot, nearestObject(ObjectTypes.ASTEROID_FIELD));
+            if (cekInside(gameState.getGameObjects(), ObjectTypes.GAS_CLOUD)) {
+                var nearestGasCloud = nearestObject(ObjectTypes.GAS_CLOUD);
+                if (checkCollision(bot, nearestFood, nearestGasCloud)) {
+                    var foodNotCollidingGas = NotCollidingObjects(ObjectTypes.FOOD, nearestGasCloud);
+                    if (foodNotCollidingGas != null) {
+                        nearestFood = foodNotCollidingGas.get(0);
+                        if (cekInside(gameState.getGameObjects(), ObjectTypes.ASTEROID_FIELD)) {
+                            var nearestAsteroid = nearestObject(ObjectTypes.ASTEROID_FIELD);
+                            if (checkCollision(bot, nearestFood, nearestAsteroid)) {
+                                var foodNotCollidingAsteroid = NotCollidingObjects(ObjectTypes.FOOD, nearestGasCloud);
+                                if (foodNotCollidingAsteroid != null) {
+                                    nearestFood = foodNotCollidingAsteroid.get(0);
+                                }
                             }
                         }
                     }
                 }
             }
+
+            if (cekInside(gameState.getGameObjects(), ObjectTypes.SUPERFOOD)) {
+                var nearestSuperFood = nearestObject(ObjectTypes.SUPERFOOD);
+                if (cekInside(gameState.getGameObjects(), ObjectTypes.GAS_CLOUD)) {
+                    var nearestGasCloud = nearestObject(ObjectTypes.GAS_CLOUD);
+                    if (checkCollision(bot, nearestSuperFood, nearestGasCloud)) {
+                        var foodNotCollidingGas = NotCollidingObjects(ObjectTypes.SUPERFOOD, nearestGasCloud);
+                        if (foodNotCollidingGas != null) {
+                            nearestSuperFood = foodNotCollidingGas.get(0);
+                            if (cekInside(gameState.getGameObjects(), ObjectTypes.ASTEROID_FIELD)) {
+                                var nearestAsteroid = nearestObject(ObjectTypes.ASTEROID_FIELD);
+                                if (checkCollision(bot, nearestSuperFood, nearestAsteroid)) {
+                                    var foodNotCollidingAsteroid = NotCollidingObjects(ObjectTypes.SUPERFOOD, nearestGasCloud);
+                                    if (foodNotCollidingAsteroid != null) {
+                                        nearestSuperFood = foodNotCollidingAsteroid.get(0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (getDistanceBetween(bot, nearestSuperFood) * 0.7 < getDistanceBetween(bot, nearestFood)) {
+                    target = nearestSuperFood;
+                }
+            }
+            return getHeadingBetween(target);
         }
-        return getHeadingBetween(nearestFood);
+        else return 0;
     }
     private static boolean checkCollision(GameObject bot,GameObject makan, GameObject debuff){
         var x1=bot.getPosition().getX();
@@ -58,21 +95,27 @@ public class Fetch{
         var cx=debuff.getPosition().getX();
         var cy=debuff.getPosition().getY();
         var radius=debuff.getSize();
-        var m=(y2-y1)/(x2-x1);
-        var c=(((y2-y1)*x1)/(x2-x1))+y1;
-        var descriminant=pow((2*m*c),2)-4*(1+pow(m,2))*(pow(c,2)-pow(radius,2));
-        if (descriminant>0){return false;}
-        else {return true;}
+        if (x2 - x1 != 0) {
+            var m = (y2 - y1) / (x2 - x1);
+            var c = (((y2 - y1) * x1) / (x2 - x1)) + y1;
+            var descriminant = pow((2 * m * c), 2) - 4 * (1 + pow(m, 2)) * (pow(c, 2) - pow(radius, 2));
+            if (descriminant > 0) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {return false;}
     }
     public static List<GameObject> NotCollidingObjects(ObjectTypes objectTypes, GameObject debuff){
         if (!gameState.getGameObjects().isEmpty()){
             var list = gameState.getGameObjects()
                     .stream().filter(item -> item.getGameObjectType() == objectTypes &&
-                            !checkCollision(bot,item,debuff))
+                            !checkCollision(bot,item,debuff)
+                    && !cekBound(getHeadingBetween(item)))
                     .sorted(Comparator
                             .comparing(item -> getDistanceBetween(bot, item)))
                     .collect(Collectors.toList());
-            return list;
+            if (!list.isEmpty()){return list;} else {return null;}
         } else {return null;}
     }
     private static GameObject nearestObject(ObjectTypes objectTypes){
@@ -82,7 +125,7 @@ public class Fetch{
                     .sorted(Comparator
                             .comparing(item -> getDistanceBetween(bot, item)))
                     .collect(Collectors.toList());
-            return foodList.get(0);
+            if (!foodList.isEmpty()){return foodList.get(0);}else {return null;}
         } else {return null;}
     }
     private static List<GameObject> getGameObjectInside(){
@@ -116,5 +159,14 @@ public class Fetch{
     }
     private static boolean cekFront(GameObject gameObject){
         return getHeadingBetween(gameObject)<30 &&getHeadingBetween(gameObject)>-30;
+    }
+    public static double getDistancetoBound(int heading){
+        double boundX=gameState.getWorld().getRadius()*cos(heading);
+        double boundY=gameState.getWorld().getRadius()*sin(heading);
+        double distance=sqrt(pow(boundX-bot.getPosition().getX(),2)+pow(boundY-bot.getPosition().getY(),2));
+        return distance;
+    }
+    public static boolean cekBound(int heading){
+        return getDistancetoBound(heading)<bot.getSize()+50;
     }
 }
