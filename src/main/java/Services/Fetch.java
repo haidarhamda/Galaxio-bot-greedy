@@ -153,6 +153,7 @@ public class Fetch{
                                         return nearestFoodNotCollidingGas.get(0);
                                     }
                                 }
+                                else {return nearestFood;}
                             } else {
                                 return nearestFood;
                             }
@@ -166,6 +167,7 @@ public class Fetch{
                                     return nearestFoodNotCollidingGas.get(0);
                                 }
                             }
+                            else {return nearestFood;}
                         } else {
                             return nearestFood;
                         }
@@ -192,7 +194,6 @@ public class Fetch{
             else {return null;}
         }
         else {return null;}
-        return null;
     }
     private static boolean checkCollision(GameObject bot,GameObject makan, GameObject debuff){
         var x1=bot.getPosition().getX();
