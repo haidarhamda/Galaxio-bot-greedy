@@ -5,9 +5,9 @@ import java.util.*;
 import java.util.stream.*;
 
 public class Algorithm {
-    public static List<GameObject> getObjectsByDistance(GameObject obj, ObjectTypes type, GameState gameState){
+    public static List<GameObject> getObjectsByDistance(GameObject obj, ObjectTypes type, GameState gameState, boolean isPlayer){
         if (!gameState.getGameObjects().isEmpty()) {
-            var objectList = gameState.getGameObjects()
+            var objectList = Algorithm.getGameObjects(type, gameState)
                     .stream().filter(item -> item.getGameObjectType() == type)
                     .sorted(Comparator
                             .comparing(item -> Algorithm.getDistanceBetween(obj, item)))
@@ -19,7 +19,7 @@ public class Algorithm {
 
     public static List<GameObject> getObjectsByBorderDistance(GameObject obj, ObjectTypes type, GameState gameState){
         if (!gameState.getGameObjects().isEmpty()) {
-            var objectList = gameState.getGameObjects()
+            var objectList = Algorithm.getGameObjects(type, gameState)
                     .stream().filter(item -> item.getGameObjectType() == type)
                     .sorted(Comparator
                             .comparing(item -> Algorithm.getBorderDistanceBetween(obj, item)))
@@ -31,7 +31,7 @@ public class Algorithm {
 
     public static List<GameObject> getObjectsBySize(ObjectTypes type, GameState gameState){
         if (!gameState.getGameObjects().isEmpty()) {
-            var objectList = gameState.getGameObjects()
+            var objectList = Algorithm.getGameObjects(type, gameState)
                     .stream().filter(item -> item.getGameObjectType() == type)
                     .sorted(Comparator
                             .comparing(item -> item.size))
@@ -86,4 +86,33 @@ public class Algorithm {
         return (int) (v * (180 / Math.PI));
     }
 
+    private static List<GameObject> getGameObjects(ObjectTypes type, GameState gameState){
+        List<GameObject> gameObjects;
+        if(type==ObjectTypes.PLAYER){
+            gameObjects = gameState.getPlayerGameObjects();
+        }else{
+            gameObjects = gameState.getGameObjects();
+        }
+        return gameObjects;
+    }
+
+    public static boolean checkCollision(GameObject object1,GameObject object2, GameObject debuff){
+        var x1=object1.getPosition().getX();
+        var y1=object1.getPosition().getX();
+        var x2=object2.getPosition().getX();
+        var y2=object2.getPosition().getY();
+        var cx=debuff.getPosition().getX();
+        var cy=debuff.getPosition().getY();
+        var radius=debuff.getSize();
+        if (x2 - x1 != 0) {
+            var m = (y2 - y1) / (x2 - x1);
+            var c = (((y2 - y1) * x1) / (x2 - x1)) + y1;
+            var descriminant = Math.pow((2 * m * c), 2) - 4 * (1 + Math.pow(m, 2)) * (Math.pow(c, 2) - Math.pow(radius, 2));
+            if (descriminant > 0) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {return false;}
+    }
 }

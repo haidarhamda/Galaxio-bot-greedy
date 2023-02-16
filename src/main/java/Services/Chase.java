@@ -24,31 +24,39 @@ public class Chase {
     private static final double MAX_CHASE_TIME = 5.0;
     private static final Integer TORPEDO_SPEED = 60;
 
-
-    public static void setAction(GameObject bot, GameState gameState){
+    public static void update(GameObject bot, GameState gameState){
         Chase.bot = bot;
         Chase.gameState = gameState;
-
-        getPrey();
-        Chase.heading = Algorithm.getHeadingBetween(Chase.bot, Chase.prey);
     }
 
-    private static GameObject getPrey(){
-        var shootable = findShootable();
-        if(shootable != null){ // is any shootable?
-            Chase.prey = shootable;
-            Chase.playerAction = PlayerActions.FORWARD;
+    public static void setAction(){
+        getPrey();
+        if(Chase.prey!=null){
+            Chase.heading = Algorithm.getHeadingBetween(Chase.bot, Chase.prey);
+            System.out.println("at "+Chase.heading);
         }else{
-            var chaseable = findChaseable();
-            if(chaseable != null){ // is any chaseable?
-                Chase.prey = chaseable;
-                Chase.playerAction = PlayerActions.FIRETORPEDOES;
+            Chase.playerAction = PlayerActions.STOP;
+        }
+    }
+
+    public static GameObject getPrey(){
+        var prey = findShootable();
+        if(prey != null){ // is any shootable?
+            Chase.prey = prey;
+            Chase.playerAction = PlayerActions.FIRETORPEDOES;
+            System.out.println("Shooting");
+        }else{
+            prey = findChaseable();
+            if(prey != null){ // is any chaseable?
+                Chase.prey = prey;
+                Chase.playerAction = PlayerActions.FORWARD;
+                System.out.println("Chasing");
             }
         }
-        return Chase.prey;
+        return prey;
     }
     
-    private static GameObject findChaseable(){
+    public static GameObject findChaseable(){
         var objListByBorderDistance = Algorithm.getObjectsByBorderDistance(bot, ObjectTypes.PLAYER, Chase.gameState);
         objListByBorderDistance.remove(0); // remove self
         
@@ -59,7 +67,7 @@ public class Chase {
         return null;
     }
 
-    private static GameObject findShootable(){
+    public static GameObject findShootable(){
         var objListBySize = Algorithm.getObjectsBySize(ObjectTypes.PLAYER, gameState);
         objListBySize.remove(0); // remove self
 
