@@ -20,15 +20,15 @@ public class Escape {
         Escape.gameState = gameState;
 
         escape_now();
-        Escape.heading = Algorithm.getHeadingBetween(Escape.bot, Escape.avoidedObjects);
+        Escape.heading = Algorithm.getHeadingBetween(Escape.bot, Escape.avoidedObjects) + 180;
 
     }
 
-    public static void escape_now() {
-        var radius = detectRadius();
-        if (radius != null) {
+    private static void escape_now() {
+        var radius = detectDistanceToRadius();
+        if (radius != -9999 && radius < 10) {
             Escape.avoidedObjects = radius;
-            if (bot.getSize() > 50) {
+            if (bot.getSize() > 10 && bot.getSize() < 15) {
                 Escape.playerAction = PlayerAction.START_AFTERBURNER;
             } else if (getRadius() > 30) {
                 Escape.playerAction = PlayerAction.FIRE_TELEPORTER;
@@ -37,10 +37,10 @@ public class Escape {
                 Escape.playerAction = PlayerAction.FORWARD;
             }
         } else {
-            var other_ship = detectship();
+            var other_ship = detectShip();
             if (other_ship != null && other_ship.getSize() <= bot.getSize() - 10) {
                 Escape.avoidedObjects = other_ship;
-                if (bot.getSize() > 50) {
+                if (bot.getSize() > 10 && bot.getSize() < 20) {
                     Escape.playerAction = PlayerAction.START_AFTERBURNER;
                 } else if (getRadius() > 30) {
                     Escape.playerAction = PlayerAction.FIRE_TELEPORTER;
@@ -51,5 +51,14 @@ public class Escape {
             }
         }
     }
+
+    private static int detectDistanceToRadius() {
+        // apa pake boolean, integer, gameobject?
+    }
+
+    private static GameObject detectShip() {
+
+    }
+
     
 }
