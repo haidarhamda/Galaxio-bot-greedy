@@ -96,23 +96,33 @@ public class Algorithm {
         return gameObjects;
     }
 
-    public static boolean checkCollision(GameObject object1,GameObject object2, GameObject debuff){
+    public static boolean checkCollision(GameObject object1,GameObject object2, List<GameObject> debuff){
         var x1=object1.getPosition().getX();
         var y1=object1.getPosition().getX();
         var x2=object2.getPosition().getX();
         var y2=object2.getPosition().getY();
-        var cx=debuff.getPosition().getX();
-        var cy=debuff.getPosition().getY();
-        var radius=debuff.getSize();
+//        var cx=debuff.getPosition().getX();
+//        var cy=debuff.getPosition().getY();
         if (x2 - x1 != 0) {
             var m = (y2 - y1) / (x2 - x1);
             var c = (((y2 - y1) * x1) / (x2 - x1)) + y1;
-            var descriminant = Math.pow((2 * m * c), 2) - 4 * (1 + Math.pow(m, 2)) * (Math.pow(c, 2) - Math.pow(radius, 2));
-            if (descriminant > 0) {
-                return false;
-            } else {
-                return true;
+            for (GameObject debuf:debuff) {
+                double distance=(Math.abs(-m*debuf.getPosition().getX()+1*debuf.getPosition().getY()+c))/
+                        Math.sqrt(Math.pow(-m,2)+Math.pow(1,2));
+                var radius = debuf.getSize();
+                if (radius>=distance){
+                    return true;
+                } else {
+                    return false;
+                }
             }
+            return false;
+//            var descriminant = Math.pow((2 * m * c), 2) - 4 * (1 + Math.pow(m, 2)) * (Math.pow(c, 2) - Math.pow(radius, 2));
+//            if (descriminant > 0) {
+//                return false;
+//            } else {
+//                return true;
+//            }
         } else {return false;}
     }
 }
