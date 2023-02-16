@@ -41,8 +41,8 @@ public class BotService {
     }
 
     public void computeNextPlayerAction(PlayerAction playerAction) {
-        playerAction.action = PlayerActions.FORWARD;
-        playerAction.heading = new Random().nextInt(360);
+        // playerAction.action = PlayerActions.FORWARD;
+        // playerAction.heading = new Random().nextInt(360);
 
         if (!gameState.getGameObjects().isEmpty()) {
             if (cekBound()) {
@@ -62,11 +62,24 @@ public class BotService {
 //                if (cekInsideFront(objectInFront, ObjectTypes.SUPERFOOD)) {
 //                    target = getNearestInFront(objectInFront, ObjectTypes.SUPERFOOD);
 //                }
-
-                Fetch fetch=new Fetch();
-                fetch.setAction(bot, gameState);
-                playerAction.heading=fetch.getHeading();
-                System.out.println(playerAction.heading);
+                System.out.println("TICK "+gameState.world.getCurrentTick());
+                Chase.update(bot, gameState);
+                if(Chase.findChaseable() != null || Chase.findShootable() != null){
+                    System.out.println("CHASING");
+                    Chase.setAction();
+                    
+                    playerAction.heading = Chase.heading;
+                    if(Chase.playerAction!=null)
+                        playerAction.action = Chase.playerAction;
+                }
+                else{
+                    System.out.println("FETCHING");
+                    // Fetch fetch=new Fetch();
+                    Fetch.setAction(bot, gameState);
+                    playerAction.action = Fetch.playerAction;
+                    playerAction.heading = Fetch.heading;
+                }
+                // System.out.println(playerAction.heading);
 
 //                if (getDistanceBetween(bot, getNearestOtherBot()) < bot.getRadius()) {
 //                    runOrFight();
