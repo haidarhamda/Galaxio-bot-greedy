@@ -1,6 +1,7 @@
 package Services;
 import Enums.*;
 import Models.*;
+import Services.Fetch;
 import java.util.*;
 import java.util.stream.*;
 
@@ -14,50 +15,68 @@ public class Escape {
 
     public static PlayerActions playerAction;
     public static int heading;
+
+    private static final double MAX_AVOID_TIME = 3.0;
     
     public static void setAction(GameObject bot, GameState gameState) {
         Escape.bot = bot;
         Escape.gameState = gameState;
 
         escape_now();
-        Escape.heading = Algorithm.getHeadingBetween(Escape.bot, Escape.avoidedObjects) + 180;
+        Escape.heading = Algorithm.getHeadingBetween(Escape.bot, Escape.avoidedObjects) + 130;
 
     }
 
     private static void escape_now() {
-        var radius = detectDistanceToRadius();
-        if (radius != -9999 && radius < 10) {
-            Escape.avoidedObjects = radius;
-            if (bot.getSize() > 10 && bot.getSize() < 15) {
-                Escape.playerAction = PlayerAction.START_AFTERBURNER;
-            } else if (getRadius() > 30) {
-                Escape.playerAction = PlayerAction.FIRE_TELEPORTER;
-                Escape.playerAction = PlayerAction.TELEPORT;
+        var torpedo = detectTorpedo();
+        if (torpedo != null) {
+            Escape.avoidedObjects = torpedo;
+            if (bot.getSize() > 10 && bot.getSize() < 30) {
+                Escape.playerAction = PlayerActions.START_AFTERBURNER;
+            } else if (bot.getRadius() > 30 && bot.getSize() > 30 && bot.getSize() < 50) {
+                Escape.playerAction = PlayerActions.FIRETELEPORT;
+                Escape.playerAction = PlayerActions.TELEPORT;
             } else {
-                Escape.playerAction = PlayerAction.FORWARD;
+                Escape.playerAction = PlayerActions.FORWARD;
             }
         } else {
             var other_ship = detectShip();
-            if (other_ship != null && other_ship.getSize() <= bot.getSize() - 10) {
-                Escape.avoidedObjects = other_ship;
-                if (bot.getSize() > 10 && bot.getSize() < 20) {
-                    Escape.playerAction = PlayerAction.START_AFTERBURNER;
-                } else if (getRadius() > 30) {
-                    Escape.playerAction = PlayerAction.FIRE_TELEPORTER;
-                    Escape.playerAction = PlayerAction.TELEPORT;
+            if (other_ship != null) {
+                    Escape.avoidedObjects = other_ship;
+                if (bot.getSize() > 10 && bot.getSize() < 30) {
+                    Escape.playerAction = PlayerActions.START_AFTERBURNER;
+                } else if (bot.getRadius() > 30 && bot.getSize() > 30 && bot.getSize() < 50) {
+                    Escape.playerAction = PlayerActions.FIRETELEPORT;
+                    Escape.playerAction = PlayerActions.TELEPORT;
                 } else {
-                    Escape.playerAction = PlayerAction.FORWARD;
+                    Escape.playerAction = PlayerActions.FORWARD;
                 }
             }
         }
     }
 
-    private static int detectDistanceToRadius() {
-        // apa pake boolean, integer, gameobject?
+    private static GameObject detectTorpedo() {
+        List<GameObject> objects=gameState.gameObjects.stream();
+        if (Fetch.cekInside(objects, ObjectTypes.TORPEDO_SALVO)) {
+            return bot;
+        }
+        return null;
+    }
+
+    private static GameObject getToOtherBot(){
+        return gameState.getPlayerGameObjects()
+                .stream().filter(item -> item.id != this.bot.id)
+                .sorted(Comparator
+                        .comparing(item -> getDistanceBetween(bot, item)))
+                .collect(Collectors.toList()).get(0);
     }
 
     private static GameObject detectShip() {
-
+        List<GameObject> objects=gameState.gameObjects.stream();
+        if (getToOtherBot().getSize() <= bot.getSize() - 10) {
+            return bot;
+        }
+        return null;
     }
 
     
