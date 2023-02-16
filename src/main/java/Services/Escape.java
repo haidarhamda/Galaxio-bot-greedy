@@ -56,7 +56,7 @@ public class Escape {
     }
 
     private static GameObject detectTorpedo() {
-        List<GameObject> objects=gameState.gameObjects.stream();
+        List<GameObject> objects=gameState.gameObjects;
         if (Fetch.cekInside(objects, ObjectTypes.TORPEDO_SALVO)) {
             return bot;
         }
@@ -65,14 +65,14 @@ public class Escape {
 
     private static GameObject getToOtherBot(){
         return gameState.getPlayerGameObjects()
-                .stream().filter(item -> item.id != this.bot.id)
+                .stream().filter(item -> item.id != Escape.bot.id)
                 .sorted(Comparator
-                        .comparing(item -> getDistanceBetween(bot, item)))
+                        .comparing(item -> Algorithm.getDistanceBetween(bot, item)))
                 .collect(Collectors.toList()).get(0);
     }
 
     private static GameObject detectShip() {
-        List<GameObject> objects=gameState.gameObjects.stream();
+        List<GameObject> objects=gameState.gameObjects;
         if (getToOtherBot().getSize() <= bot.getSize() - 10) {
             return bot;
         }

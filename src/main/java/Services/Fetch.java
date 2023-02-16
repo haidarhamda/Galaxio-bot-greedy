@@ -241,7 +241,7 @@ public class Fetch{
                 .filter(item->getDistanceBetween(bot,item)<bot.getRadius()).collect(Collectors.toList());
         return objects;
     }
-    private static boolean cekInside(List<GameObject> gameObjectList,ObjectTypes objectTypes){
+    public static boolean cekInside(List<GameObject> gameObjectList,ObjectTypes objectTypes){
         for (GameObject object:gameObjectList) {
             if (object.getGameObjectType()==objectTypes){
                 return true;
