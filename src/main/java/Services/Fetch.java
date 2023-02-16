@@ -118,13 +118,13 @@ public class Fetch{
     public static GameObject selectTarget(ObjectTypes objectTypes){
         if (!gameState.getGameObjects().isEmpty()) {
             if (cekInside(gameState.getGameObjects(), objectTypes)) {
-                var nearestFood = nearestObject(objectTypes);
+                var nearestFood = Algorithm.getObjectsByDistance(bot,ObjectTypes.FOOD,gameState,false).get(0);
                 var nearestSuperFood = nearestObject(ObjectTypes.SUPERFOOD);
                 var target = nearestFood;
                 if (cekInside(gameState.getGameObjects(), ObjectTypes.GAS_CLOUD)) {
-                    var nearestFoodNotCollidingGas = NotCollidingObjects(objectTypes, nearestObject(ObjectTypes.GAS_CLOUD));
+                    var nearestFoodNotCollidingGas = NotCollidingObjects(objectTypes, Algorithm.getObjectsByDistance(bot,ObjectTypes.GAS_CLOUD,gameState,false));
                     if (cekInside(gameState.getGameObjects(), ObjectTypes.ASTEROID_FIELD)) {
-                        var nearestFoodNotCollidingAsteroid = NotCollidingObjects(objectTypes, nearestObject(ObjectTypes.ASTEROID_FIELD));
+                        var nearestFoodNotCollidingAsteroid = NotCollidingObjects(objectTypes, Algorithm.getObjectsByDistance(bot,ObjectTypes.ASTEROID_FIELD,gameState,false));
                         if (nearestFoodNotCollidingAsteroid != null) {
                             if (nearestFoodNotCollidingGas != null) {
                                 List<GameObject> l1 = new ArrayList<GameObject>() {{
@@ -134,7 +134,7 @@ public class Fetch{
                                 }};
                                 return getBestWeight(l1);
                             } else {
-                                if (checkCollision(bot, nearestFood, nearestObject(ObjectTypes.ASTEROID_FIELD))) {
+                                if (Algorithm.checkCollision(bot, nearestFood, Algorithm.getObjectsByDistance(bot,ObjectTypes.ASTEROID_FIELD,gameState,false))) {
                                     if (getDistanceBetween(bot, nearestFood) * 1.5 < getDistanceBetween(bot, nearestFoodNotCollidingAsteroid.get(0))) {
                                         return nearestFoodNotCollidingAsteroid.get(0);
                                     } else {
@@ -146,7 +146,7 @@ public class Fetch{
                             }
                         } else {
                             if (nearestFoodNotCollidingGas != null) {
-                                if (checkCollision(bot, nearestFood, nearestObject(ObjectTypes.GAS_CLOUD))) {
+                                if (Algorithm.checkCollision(bot, nearestFood, Algorithm.getObjectsByDistance(bot,ObjectTypes.GAS_CLOUD,gameState,false))) {
                                     if (getDistanceBetween(bot, nearestFood) * 2 < getDistanceBetween(bot, nearestFoodNotCollidingGas.get(0))) {
                                         return nearestFood;
                                     } else {
@@ -160,7 +160,7 @@ public class Fetch{
                         }
                     } else {
                         if (nearestFoodNotCollidingGas != null) {
-                            if (checkCollision(bot, nearestFood, nearestObject(ObjectTypes.GAS_CLOUD))) {
+                            if (Algorithm.checkCollision(bot, nearestFood, Algorithm.getObjectsByDistance(bot,ObjectTypes.GAS_CLOUD,gameState,false))) {//gas
                                 if (getDistanceBetween(bot, nearestFood) * 2 < getDistanceBetween(bot, nearestFoodNotCollidingGas.get(0))) {
                                     return nearestFood;
                                 } else {
@@ -173,9 +173,9 @@ public class Fetch{
                         }
                     }
                 } else if (cekInside(gameState.getGameObjects(), ObjectTypes.ASTEROID_FIELD)) {
-                    var nearestFoodNotCollidingAsteroid = NotCollidingObjects(objectTypes, nearestObject(ObjectTypes.ASTEROID_FIELD));
+                    var nearestFoodNotCollidingAsteroid = NotCollidingObjects(objectTypes, Algorithm.getObjectsByDistance(bot,ObjectTypes.ASTEROID_FIELD,gameState,false));//asteroid
                     if (nearestFoodNotCollidingAsteroid != null) {
-                        if (checkCollision(bot, nearestFood, nearestObject(ObjectTypes.ASTEROID_FIELD))) {
+                        if (Algorithm.checkCollision(bot, nearestFood, Algorithm.getObjectsByDistance(bot,ObjectTypes.ASTEROID_FIELD,gameState,false))) {
                             if (getDistanceBetween(bot, nearestFood) * 1.5 < getDistanceBetween(bot, nearestFoodNotCollidingAsteroid.get(0))) {
                                 return nearestFoodNotCollidingAsteroid.get(0);
                             } else {
@@ -195,30 +195,30 @@ public class Fetch{
         }
         else {return null;}
     }
-    private static boolean checkCollision(GameObject bot,GameObject makan, GameObject debuff){
-        var x1=bot.getPosition().getX();
-        var y1=bot.getPosition().getX();
-        var x2=makan.getPosition().getX();
-        var y2=makan.getPosition().getY();
-        var cx=debuff.getPosition().getX();
-        var cy=debuff.getPosition().getY();
-        var radius=debuff.getSize();
-        if (x2 - x1 != 0) {
-            var m = (y2 - y1) / (x2 - x1);
-            var c = (((y2 - y1) * x1) / (x2 - x1)) + y1;
-            var descriminant = pow((2 * m * c), 2) - 4 * (1 + pow(m, 2)) * (pow(c, 2) - pow(radius, 2));
-            if (descriminant > 0) {
-                return false;
-            } else {
-                return true;
-            }
-        } else {return false;}
-    }
-    public static List<GameObject> NotCollidingObjects(ObjectTypes objectTypes, GameObject debuff){
+//    private static boolean checkCollision(GameObject bot,GameObject makan, GameObject debuff){
+//        var x1=bot.getPosition().getX();
+//        var y1=bot.getPosition().getX();
+//        var x2=makan.getPosition().getX();
+//        var y2=makan.getPosition().getY();
+//        var cx=debuff.getPosition().getX();
+//        var cy=debuff.getPosition().getY();
+//        var radius=debuff.getSize();
+//        if (x2 - x1 != 0) {
+//            var m = (y2 - y1) / (x2 - x1);
+//            var c = (((y2 - y1) * x1) / (x2 - x1)) + y1;
+//            var descriminant = pow((2 * m * c), 2) - 4 * (1 + pow(m, 2)) * (pow(c, 2) - pow(radius, 2));
+//            if (descriminant > 0) {
+//                return false;
+//            } else {
+//                return true;
+//            }
+//        } else {return false;}
+//    }
+    public static List<GameObject> NotCollidingObjects(ObjectTypes objectTypes, List<GameObject> debuff){
         if (!gameState.getGameObjects().isEmpty()){
             var list = gameState.getGameObjects()
                     .stream().filter(item -> item.getGameObjectType() == objectTypes &&
-                            !checkCollision(bot,item,debuff)
+                            !Algorithm.checkCollision(bot,item,debuff)
                             && !cekBound(getHeadingBetween(item)))
                     .sorted(Comparator
                             .comparing(item -> getDistanceBetween(bot, item)))
