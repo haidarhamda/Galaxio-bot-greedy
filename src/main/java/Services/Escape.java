@@ -1,8 +1,6 @@
 package Services;
 import Enums.*;
 import Models.*;
-
-
 import java.util.*;
 import java.util.stream.*;
 
@@ -16,7 +14,15 @@ public class Escape {
 
     public static PlayerActions playerAction;
     public static int heading;
-    public int getHeading(){return heading;}
+    
+    public static void setAction(GameObject bot, GameState gameState) {
+        Escape.bot = bot;
+        Escape.gameState = gameState;
+
+        // escape_now();
+        Escape.heading = Algorithm.getHeadingBetween(Escape.bot, Escape.avoidedObjects);
+
+    }
 
     public static void escape_radius() {
         
