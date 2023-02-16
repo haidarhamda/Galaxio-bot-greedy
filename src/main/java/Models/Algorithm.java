@@ -125,4 +125,26 @@ public class Algorithm {
 //            }
         } else {return false;}
     }
+
+    public static boolean cekTorpedo(GameObject bot, List<GameObject> gameObjectList, GameState gameState){
+        if (cekInside(gameObjectList,ObjectTypes.TORPEDO_SALVO)){
+            // System.out.println(nearestObject(ObjectTypes.TORPEDO_SALVO).currentHeading);
+            // System.out.println(getHeadingBetween(nearestObject(ObjectTypes.TORPEDO_SALVO),bot));
+            var degree = getHeadingBetween(getObjectsByDistance(bot, ObjectTypes.TORPEDO_SALVO, gameState, false).get(0), bot);
+            return degree<30 &&
+                    degree>-30;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean cekInside(List<GameObject> gameObjectList,ObjectTypes objectTypes){
+        for (GameObject object:gameObjectList) {
+            if (object.getGameObjectType()==objectTypes){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
