@@ -30,11 +30,19 @@ tersebut.
 * NodeJS
 * .Net Core 3.1
 * Apache Maven
+* Download starter pack.zip Galaxio: https://github.com/EntelectChallenge/2021-Galaxio/releases/tag/2021.3.2
 
-## Build Program
-1. Clone repository ini
-2. Buka terminal di dalam folder hasil clone
-3. Jalankan perintah `mvn clean package`
+## Build and Run Program
+1. Extract starter pack tersebut di folder yang diinginkan
+2. Clone repository ini
+3. Buka terminal di dalam folder hasil clone
+4. Jalankan perintah `mvn clean package`
+5. Pergi ke folder starter-pack
+6. Edit file run.bat di folder starter-pack tersebut jika perlu, lalu run file .bat tersebut.
+7. Setelah selesai, klik Galaxio.exe di folder visualizer untuk melihat animasi game Galaxio tersebut.
+8. Load Game dengan file .json terbaru yang seharusnya sudah disediakan di autofill.
+9. Jalankan game.
+
 
 ## Author
 
