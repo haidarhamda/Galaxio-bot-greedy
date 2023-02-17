@@ -14,7 +14,7 @@ public class BotService {
     private GameObject bot;
     private PlayerAction playerAction;
     private GameState gameState;
-    private GameObject target;
+    // private GameObject target;
     private boolean headingBound=false;
     private GameObject center=new GameObject(UUID.randomUUID(),1,0,0,new Position(),ObjectTypes.CENTER);
 
@@ -56,15 +56,18 @@ public class BotService {
             if (!headingBound) {
 //                target = nearestObject(ObjectTypes.FOOD);
 
-                var objectInside = getGameObjectInside();
-                var objectInFront = getGameObjectInsideFront();
+                // var objectInside = getGameObjectInside();
+                // var objectInFront = getGameObjectInsideFront();
 
 //                if (cekInsideFront(objectInFront, ObjectTypes.SUPERFOOD)) {
 //                    target = getNearestInFront(objectInFront, ObjectTypes.SUPERFOOD);
 //                }
                 System.out.println("TICK "+gameState.world.getCurrentTick());
                 Chase.update(bot, gameState);
-                if (!Algorithm.cekTorpedo(bot,gameState.getGameObjects(),gameState)|| (getNearestOtherBot().getSize()>bot.getSize()&&Algorithm.getDistanceBetween(bot.getPosition(),getNearestOtherBot().getPosition())<300)) {
+                if (!Algorithm.cekTorpedo(bot,gameState.getGameObjects(),gameState)||
+                (getNearestOtherBot().getSize()>bot.getSize() && 
+                Algorithm.getDistanceBetween(bot.getPosition(),getNearestOtherBot().getPosition())<300)) {
+
                     if (Chase.findChaseable() != null || Chase.findShootable() != null) {
                         System.out.println("CHASING");
                         Chase.setAction();
@@ -120,62 +123,62 @@ public class BotService {
         optionalBot.ifPresent(bot -> this.bot = bot);
     }
 
-    private double getDistanceBetween(GameObject object1, GameObject object2) {
-        var triangleX = Math.abs(object1.getPosition().x - object2.getPosition().x);
-        var triangleY = Math.abs(object1.getPosition().y - object2.getPosition().y);
-        return Math.sqrt(triangleX * triangleX + triangleY * triangleY);
-    }
+    // private double getDistanceBetween(GameObject object1, GameObject object2) {
+    //     var triangleX = Math.abs(object1.getPosition().x - object2.getPosition().x);
+    //     var triangleY = Math.abs(object1.getPosition().y - object2.getPosition().y);
+    //     return Math.sqrt(triangleX * triangleX + triangleY * triangleY);
+    // }
 
-    private int getHeadingBetween(GameObject otherObject) {
-        var direction = toDegrees(Math.atan2(otherObject.getPosition().y - bot.getPosition().y,
-                otherObject.getPosition().x - bot.getPosition().x));
-        return (direction + 360) % 360;
-    }
-    private int getHeadingBetween(GameObject object1,GameObject object2) {
-        var direction = toDegrees(Math.atan2(object2.getPosition().y - object1.getPosition().y,
-                object2.getPosition().x - object1.getPosition().x));
-        return (direction + 360) % 360;
-    }
+    // private int getHeadingBetween(GameObject otherObject) {
+    //     var direction = toDegrees(Math.atan2(otherObject.getPosition().y - bot.getPosition().y,
+    //             otherObject.getPosition().x - bot.getPosition().x));
+    //     return (direction + 360) % 360;
+    // }
+    // private int getHeadingBetween(GameObject object1,GameObject object2) {
+    //     var direction = toDegrees(Math.atan2(object2.getPosition().y - object1.getPosition().y,
+    //             object2.getPosition().x - object1.getPosition().x));
+    //     return (direction + 360) % 360;
+    // }
 
-    private int toDegrees(double v) {
-        return (int) (v * (180 / Math.PI));
-    }
+    // private int toDegrees(double v) {
+    //     return (int) (v * (180 / Math.PI));
+    // }
 
-    public GameObject nearestObject(ObjectTypes objectTypes){
-        if (!gameState.getGameObjects().isEmpty()){
-            var foodList = gameState.getGameObjects()
-                    .stream().filter(item -> item.getGameObjectType() == objectTypes)
-                    .sorted(Comparator
-                            .comparing(item -> getDistanceBetween(bot, item)))
-                    .collect(Collectors.toList());
-            return foodList.get(0);
-        } else {return null;}
-    }
-    public void runOrFight(){
-        if (getNearestOtherBot()!=null&&getBot().getSize()>getNearestOtherBot().getSize()){
-            //pewpew
-            piwpiw();
-        } else {
-            run();
-        }
-    }
-    public void run(){
-        target=nearestObject(ObjectTypes.FOOD);
-        updateHeading(45);
-        if (bot.getSize()>10){
-            playerAction.setAction(PlayerActions.START_AFTERBURNER);
-            System.out.println(playerAction.getAction());
-        } else {
-            playerAction.setAction(PlayerActions.STOP_AFTERBURNER);
-            System.out.println(playerAction.getAction());
-        }
-    }
-    public void piwpiw(){
-        target=getNearestOtherBot();
-        if (target!=null){
-        playerAction.heading=getHeadingBetween(target);
-        playerAction.setAction(PlayerActions.FIRETORPEDOES);}
-    }
+    // public GameObject nearestObject(ObjectTypes objectTypes){
+    //     if (!gameState.getGameObjects().isEmpty()){
+    //         var foodList = gameState.getGameObjects()
+    //                 .stream().filter(item -> item.getGameObjectType() == objectTypes)
+    //                 .sorted(Comparator
+    //                         .comparing(item -> getDistanceBetween(bot, item)))
+    //                 .collect(Collectors.toList());
+    //         return foodList.get(0);
+    //     } else {return null;}
+    // }
+    // public void runOrFight(){
+    //     if (getNearestOtherBot()!=null&&getBot().getSize()>getNearestOtherBot().getSize()){
+    //         //pewpew
+    //         piwpiw();
+    //     } else {
+    //         run();
+    //     }
+    // }
+    // public void run(){
+    //     target=nearestObject(ObjectTypes.FOOD);
+    //     updateHeading(45);
+    //     if (bot.getSize()>10){
+    //         playerAction.setAction(PlayerActions.START_AFTERBURNER);
+    //         System.out.println(playerAction.getAction());
+    //     } else {
+    //         playerAction.setAction(PlayerActions.STOP_AFTERBURNER);
+    //         System.out.println(playerAction.getAction());
+    //     }
+    // }
+    // public void piwpiw(){
+    //     target=getNearestOtherBot();
+    //     if (target!=null){
+    //     playerAction.heading=getHeadingBetween(target);
+    //     playerAction.setAction(PlayerActions.FIRETORPEDOES);}
+    // }
     public double getDistancetoRearBound(){
         double boundX=gameState.getWorld().getRadius()*cos(playerAction.getHeading()+180);
         double boundY=gameState.getWorld().getRadius()*sin(playerAction.getHeading()+180);
@@ -191,53 +194,53 @@ public class BotService {
     public boolean cekBound(){
         return getDistancetoBound()<bot.getSize()+50;
     }
-    public List<GameObject> getGameObjectInside(){
-        List<GameObject> objects=gameState.gameObjects.stream()
-                .filter(item->getDistanceBetween(bot,item)<bot.getRadius()).collect(Collectors.toList());
-        return objects;
-    }
-    private boolean cekInside(List<GameObject> gameObjectList,ObjectTypes objectTypes){
-        for (GameObject object:gameObjectList) {
-            if (object.getGameObjectType()==objectTypes){
-                return true;
-            }
-        }
-        return false;
-    }
+    // public List<GameObject> getGameObjectInside(){
+    //     List<GameObject> objects=gameState.gameObjects.stream()
+    //             .filter(item->getDistanceBetween(bot,item)<bot.getRadius()).collect(Collectors.toList());
+    //     return objects;
+    // }
+    // private boolean cekInside(List<GameObject> gameObjectList,ObjectTypes objectTypes){
+    //     for (GameObject object:gameObjectList) {
+    //         if (object.getGameObjectType()==objectTypes){
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
     private GameObject getNearestOtherBot(){
         return gameState.getPlayerGameObjects()
                 .stream().filter(item -> item.id != this.bot.id)
                 .sorted(Comparator
-                        .comparing(item -> getDistanceBetween(bot, item)))
+                        .comparing(item -> Algorithm.getDistanceBetween(bot, item)))
                 .collect(Collectors.toList()).get(0);
     }
-    private boolean cekFront(GameObject gameObject){
-        return getHeadingBetween(gameObject)<30 &&getHeadingBetween(gameObject)>-30;
-    }
-    private List<GameObject> getGameObjectInsideFront(){
-        List<GameObject> objects=gameState.gameObjects.stream()
-                .filter(item->cekFront(item)&&getDistanceBetween(bot,item)<bot.radius/2).collect(Collectors.toList());
-        return objects;
-    }
-    private boolean cekInsideFront(List<GameObject> gameObjectList,ObjectTypes objectTypes) {
-//        System.out.println(gameObjectList.size());
-        for (GameObject object : gameObjectList) {
-            if (object.getGameObjectType() == objectTypes) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private GameObject getNearestInFront(List<GameObject> gameObjectList, ObjectTypes objectTypes){
-        if (!gameObjectList.isEmpty()){
-            var foodList = gameObjectList
-                    .stream().filter(item -> item.getGameObjectType() == objectTypes)
-                    .sorted(Comparator
-                            .comparing(item -> getDistanceBetween(bot, item)))
-                    .collect(Collectors.toList());
-            return foodList.get(0);
-        } else {return null;}
-    }
+    // private boolean cekFront(GameObject gameObject){
+    //     return getHeadingBetween(gameObject)<30 &&getHeadingBetween(gameObject)>-30;
+    // }
+    // private List<GameObject> getGameObjectInsideFront(){
+    //     List<GameObject> objects=gameState.gameObjects.stream()
+    //             .filter(item->cekFront(item)&&getDistanceBetween(bot,item)<bot.radius/2).collect(Collectors.toList());
+    //     return objects;
+    // }
+//     private boolean cekInsideFront(List<GameObject> gameObjectList,ObjectTypes objectTypes) {
+// //        System.out.println(gameObjectList.size());
+//         for (GameObject object : gameObjectList) {
+//             if (object.getGameObjectType() == objectTypes) {
+//                 return true;
+//             }
+//         }
+//         return false;
+//     }
+//     private GameObject getNearestInFront(List<GameObject> gameObjectList, ObjectTypes objectTypes){
+//         if (!gameObjectList.isEmpty()){
+//             var foodList = gameObjectList
+//                     .stream().filter(item -> item.getGameObjectType() == objectTypes)
+//                     .sorted(Comparator
+//                             .comparing(item -> getDistanceBetween(bot, item)))
+//                     .collect(Collectors.toList());
+//             return foodList.get(0);
+//         } else {return null;}
+//     }
 //    private boolean cekTorpedo(List<GameObject> gameObjectList){
 //        if (cekInside(gameObjectList,ObjectTypes.TORPEDO_SALVO)){
 //            System.out.println(nearestObject(ObjectTypes.TORPEDO_SALVO).currentHeading);
@@ -248,14 +251,14 @@ public class BotService {
 //            return false;
 //        }
 //    }
-    private void updateHeading(int degree){
-        if (playerAction.getHeading()%90<=45){
-            playerAction.heading+=degree;
-        }else {
-            playerAction.heading-=degree;
-        }
-    }
+    // private void updateHeading(int degree){
+    //     if (playerAction.getHeading()%90<=45){
+    //         playerAction.heading+=degree;
+    //     }else {
+    //         playerAction.heading-=degree;
+    //     }
+    // }
     private void updateHeadingToCenter(){
-        playerAction.heading=getHeadingBetween(bot,center);
+        playerAction.heading=Algorithm.getHeadingBetween(bot,center);
     }
 }
