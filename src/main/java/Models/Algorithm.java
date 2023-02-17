@@ -130,9 +130,10 @@ public class Algorithm {
         if (cekInside(gameObjectList,ObjectTypes.TORPEDO_SALVO)){
             // System.out.println(nearestObject(ObjectTypes.TORPEDO_SALVO).currentHeading);
             // System.out.println(getHeadingBetween(nearestObject(ObjectTypes.TORPEDO_SALVO),bot));
-            var degree = getHeadingBetween(getObjectsByDistance(bot, ObjectTypes.TORPEDO_SALVO, gameState, false).get(0), bot);
-            return degree<30 &&
-                    degree>-30;
+            var degree = getHeadingBetween(bot,getObjectsByDistance(bot, ObjectTypes.TORPEDO_SALVO, gameState, false).get(0));
+            var torpedoHeading=getObjectsByDistance(bot, ObjectTypes.TORPEDO_SALVO, gameState, false).get(0).currentHeading;
+            return degree-30<torpedoHeading &&
+                    torpedoHeading<degree+30;
         } else {
             return false;
         }

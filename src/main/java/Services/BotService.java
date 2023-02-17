@@ -238,16 +238,16 @@ public class BotService {
             return foodList.get(0);
         } else {return null;}
     }
-    private boolean cekTorpedo(List<GameObject> gameObjectList){
-        if (cekInside(gameObjectList,ObjectTypes.TORPEDO_SALVO)){
-            System.out.println(nearestObject(ObjectTypes.TORPEDO_SALVO).currentHeading);
-            System.out.println(getHeadingBetween(nearestObject(ObjectTypes.TORPEDO_SALVO),bot));
-            return getHeadingBetween(nearestObject(ObjectTypes.TORPEDO_SALVO),bot)<30 &&
-                    getHeadingBetween(nearestObject(ObjectTypes.TORPEDO_SALVO),bot)>-30;
-        } else {
-            return false;
-        }
-    }
+//    private boolean cekTorpedo(List<GameObject> gameObjectList){
+//        if (cekInside(gameObjectList,ObjectTypes.TORPEDO_SALVO)){
+//            System.out.println(nearestObject(ObjectTypes.TORPEDO_SALVO).currentHeading);
+//            System.out.println(getHeadingBetween(nearestObject(ObjectTypes.TORPEDO_SALVO),bot));
+//            return getHeadingBetween(nearestObject(ObjectTypes.TORPEDO_SALVO),bot)<30 &&
+//                    getHeadingBetween(nearestObject(ObjectTypes.TORPEDO_SALVO),bot)>-30;
+//        } else {
+//            return false;
+//        }
+//    }
     private void updateHeading(int degree){
         if (playerAction.getHeading()%90<=45){
             playerAction.heading+=degree;
