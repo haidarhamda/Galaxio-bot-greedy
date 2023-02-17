@@ -13,6 +13,12 @@ Semester II Tahun 2022/2023
 
 Ini merupakan program sederhana dalam Bahasa Java yang mengimplementasikan Algoritma Greedy dalam Aplikasi Permainan “Galaxio”. Kami memilih tiga buah strategi algoritma yang digunakan berdasarkan prioritas: Escaping, Chasing, dan Fetching. Kapal akan berusaha "kabur" dari berbagai bahaya yang mengancam kapal tersebut. Jika bahaya hilang, barulah kapal kami mulai menyerang kapal lawan. Jika kapal kami dalam posisi yang menyusahkan (seperti ukuran yang lebih kecil dari kapal lawan) dan tidak ada bahaya pada tick tertentu, kapal akan berusaha melakukan feeding terhadap food sebanyak mungkin.
 
+## Prerequisites
+
+## Build Program
+
+## Run Program
+
 ## Author
 
 Muhammad Farrel Danendra Rachim (13521048)
