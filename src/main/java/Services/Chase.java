@@ -20,6 +20,7 @@ public class Chase {
     public static GameObject chasePrey;
     public static int heading;
     private static boolean starting = false;
+    private static boolean isBoosting = false;
     private static boolean stopping = false;
     public static boolean aiming = true;
 
@@ -36,6 +37,7 @@ public class Chase {
         if(stopping){
             Chase.playerAction = PlayerActions.STOP_AFTERBURNER;
             Chase.stopping = false;
+            Chase.isBoosting = false;
             System.out.println("stopping");
         }
         else{
@@ -45,6 +47,7 @@ public class Chase {
                 if(Chase.starting){
                     Chase.playerAction = PlayerActions.START_AFTERBURNER;
                     Chase.starting = false;
+                    Chase.isBoosting = true;
                     System.out.println("boosting");
                 }
                 else{
@@ -84,7 +87,9 @@ public class Chase {
     private static void needAfterBurner(){
         double time = Algorithm.calcCollisionTime(Chase.bot, Chase.chasePrey);
         if(MAX_CHASE_TIME < time && time <= MAX_CHASE_TIME*2) Chase.starting = true;
-        else Chase.stopping = true;
+        else if(Chase.isBoosting){
+            Chase.stopping = true;
+        }
     }
 
     public static GameObject findChaseable(){
