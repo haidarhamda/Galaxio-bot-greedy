@@ -4,9 +4,6 @@ import Models.*;
 import java.util.*;
 import java.util.stream.*;
 
-import static java.lang.Math.*;
-import static java.lang.Math.pow;
-
 public class Escape {
     private static GameObject bot;
     private static GameState gameState;
@@ -25,8 +22,15 @@ public class Escape {
 
     private static void escape_now() {
         var torpedo = detectTorpedo();
-        if (torpedo != null) {
-            Escape.avoidedObjects = torpedo;
+        var gasCloud = detectGasCloud();
+        if (torpedo != null || gasCloud != null) {
+            // prioritas torpedo terlebih dahulu
+            if (gasCloud != null) {
+                Escape.avoidedObjects = gasCloud;
+            }
+            if (torpedo != null) {
+                Escape.avoidedObjects = torpedo;
+            }
             if (bot.getSize() > 10 && bot.getSize() < 30) {
                 Escape.heading = Algorithm.getHeadingBetween(Escape.bot, Escape.avoidedObjects) + 130;
                 Escape.playerAction = PlayerActions.START_AFTERBURNER;
@@ -80,6 +84,14 @@ public class Escape {
         }
         return null;
     }
+
+    private static GameObject detectGasCloud() {
+        List<GameObject> objects=gameState.gameObjects;
+        if (Algorithm.checkCollision(bot, ObjectTypes.GAS_CLOUD, objects)) {
+            return bot;
+        }
+        return null;
+    } 
 
     
 }
