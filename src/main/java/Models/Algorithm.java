@@ -59,7 +59,7 @@ public class Algorithm {
         return Math.sqrt(triangleX * triangleX + triangleY * triangleY)-object1.size-object2.size;
     }
 
-    public static double predictCollisionTime(GameObject object1, GameObject object2){
+    public static double calcCollisionTime(GameObject object1, GameObject object2){
         /**
          * Will predict by assuming target will move on the opposite direction,
          * t = d/(v2-v2)
@@ -72,8 +72,13 @@ public class Algorithm {
         return distance/speed;
     }
 
-    public static double calcualteCenterToBorderTime(GameObject object1){
-        return Algorithm.toTime(object1.speed, object1.size);
+    public static double calcualteCenterToBorderTime(GameObject object1, boolean afterburner){
+        if(afterburner){
+            return Algorithm.toTime(object1.speed*2, object1.size);
+        }
+        else{
+            return Algorithm.toTime(object1.speed, object1.size);
+        }
     }
 
     public static int getHeadingBetween(GameObject object1,GameObject object2) {

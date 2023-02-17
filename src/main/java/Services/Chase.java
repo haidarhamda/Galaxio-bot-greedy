@@ -19,6 +19,8 @@ public class Chase {
     public static GameObject aimPrey;
     public static GameObject chasePrey;
     public static int heading;
+    private static boolean starting = false;
+    private static boolean stopping = false;
     public static boolean aiming = true;
 
     private static final double MAX_CHASE_TIME = 5.0;
@@ -31,31 +33,39 @@ public class Chase {
 
     public static void setAction(){
         Chase.getPrey();
-        if(Chase.chasePrey != null){
-            Chase.heading = Algorithm.getHeadingBetween(Chase.bot, Chase.chasePrey);
-            Chase.playerAction = PlayerActions.FORWARD;
+        if(stopping){
+            Chase.playerAction = PlayerActions.STOP_AFTERBURNER;
+            Chase.stopping = false;
+            System.out.println("stopping");
         }
-        if(Chase.aimPrey != null){
-            if(Chase.aiming){
-                Chase.heading = Algorithm.getHeadingBetween(Chase.bot, Chase.aimPrey);
-                Chase.playerAction = PlayerActions.FIRETORPEDOES;
-                Chase.aiming = false;
-            }else if(Chase.chasePrey == null){
-                Chase.heading = Algorithm.getHeadingBetween(Chase.bot, Chase.aimPrey);
-                Chase.playerAction = PlayerActions.FORWARD;
-                Chase.aiming = true;
-            }else{
-                Chase.aiming = true;
+        else{
+            if(Chase.chasePrey != null){
+                Chase.heading = Algorithm.getHeadingBetween(Chase.bot, Chase.chasePrey);
+                Chase.needAfterBurner();
+                if(Chase.starting){
+                    Chase.playerAction = PlayerActions.START_AFTERBURNER;
+                    Chase.starting = false;
+                    System.out.println("boosting");
+                }
+                else{
+                    Chase.playerAction = PlayerActions.FORWARD;
+                }
             }
-
+            if(Chase.aimPrey != null && !Chase.starting){
+                if(Chase.aiming){
+                    Chase.heading = Algorithm.getHeadingBetween(Chase.bot, Chase.aimPrey);
+                    Chase.playerAction = PlayerActions.FIRETORPEDOES;
+                    Chase.aiming = false;
+                }else if(Chase.chasePrey == null){
+                    Chase.heading = Algorithm.getHeadingBetween(Chase.bot, Chase.aimPrey);
+                    Chase.playerAction = PlayerActions.FORWARD;
+                    Chase.aiming = true;
+                }else{
+                    Chase.aiming = true;
+                }
+    
+            }
         }
-        // if(Chase.aiming){
-
-        //     Chase.aiming = false;
-        // }
-        // System.out.println("shooter "+Chase.bot.id);
-        // System.out.println("prey "+Chase.prey.id);
-        // System.out.println("at "+Chase.heading);
     }
 
     public static void getPrey(){
@@ -71,6 +81,12 @@ public class Chase {
         }
     }
     
+    private static void needAfterBurner(){
+        double time = Algorithm.calcCollisionTime(Chase.bot, Chase.chasePrey);
+        if(MAX_CHASE_TIME < time && time <= MAX_CHASE_TIME*2) Chase.starting = true;
+        else Chase.stopping = true;
+    }
+
     public static GameObject findChaseable(){
         var objListByBorderDistance = Algorithm.getObjectsByBorderDistance(bot, ObjectTypes.PLAYER, Chase.gameState);
         objListByBorderDistance.remove(Chase.bot); // remove self
@@ -79,7 +95,9 @@ public class Chase {
         var wormholes = Algorithm.getObjectsByDistance(bot, ObjectTypes.WORMHOLE, gameState, false);
         
         for(GameObject bot : objListByBorderDistance){
-            if(Algorithm.predictCollisionTime(Chase.bot, bot) <= MAX_CHASE_TIME && bot.size*2 <= Chase.bot.size){
+            if((Algorithm.calcCollisionTime(Chase.bot, bot) <= MAX_CHASE_TIME ||
+            objListByBorderDistance.size()==1) &&
+            bot.size*2 <= Chase.bot.size){
                 if(!Algorithm.checkCollision(Chase.bot, bot, gasClouds) && 
                 !Algorithm.checkCollision(Chase.bot, bot, wormholes))
                 return bot;
@@ -99,7 +117,7 @@ public class Chase {
         for(GameObject bot : objListBySize){
             var distance = Algorithm.getDistanceBetween(Chase.bot, bot);
             var torpedoTravelTime = Algorithm.toTime(TORPEDO_SPEED, distance);
-            if(Algorithm.calcualteCenterToBorderTime(bot) >= torpedoTravelTime){
+            if(Algorithm.calcualteCenterToBorderTime(bot, true) >= torpedoTravelTime){ // will only shoot if confident
                 if(!Algorithm.checkCollision(Chase.bot, bot, gasClouds) && 
                 !Algorithm.checkCollision(Chase.bot, bot, asteroids) &&
                 !Algorithm.checkCollision(Chase.bot, bot, wormholes))
