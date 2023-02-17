@@ -16,9 +16,25 @@ Galaxio adalah sebuah game battle royale yang mempertandingkan bot kapal anda de
 
 Ini merupakan program sederhana dalam Bahasa Java yang mengimplementasikan Algoritma Greedy dalam Aplikasi Permainan “Galaxio”. Kami memilih tiga buah strategi algoritma yang digunakan berdasarkan prioritas: Escaping, Chasing, dan Fetching. Kapal akan berusaha "kabur" dari berbagai bahaya yang mengancam kapal tersebut. Jika bahaya hilang, barulah kapal kami mulai menyerang kapal lawan. Jika kapal kami dalam posisi yang menyusahkan (seperti ukuran yang lebih kecil dari kapal lawan) dan tidak ada bahaya pada tick tertentu, kapal akan berusaha melakukan feeding terhadap food sebanyak mungkin.
 
+## Penjelasan Singkat Algoritma Greedy yang Diimplementasikan
+Tujuan dari setiap pemain dalam permainan Galaxio ini adalah untuk
+bertahan sampai menjadi pemain tersisa terakhir. Terdapat berbagai
+cara untuk menjadi pemain terakhir yang bersisa, seperti menembakin
+pemain lain, fokus mencari makan, dan lain lain. Dalam program ini,
+bot akan berfokus mencari makan, namun ketika terdapat pemain lain
+yang mungkin ditembak/dikejar, bot akan menembak/mengejar pamain
+tersebut.
+
 ## Prerequisites
+* Java versi 11 atau lebih
+* NodeJS
+* .Net Core 3.1
+* Apache Maven
 
 ## Build Program
+1. Clone repository ini
+2. Buka terminal di dalam folder hasil clone
+3. Jalankan perintah `mvn clean package`
 
 ## Run Program
 
