@@ -86,9 +86,11 @@ public class Escape {
     }
 
     private static GameObject detectGasCloud() {
-        List<GameObject> objects=gameState.gameObjects;
-        if (Algorithm.checkCollision(bot, ObjectTypes.GAS_CLOUD, objects)) {
-            return bot;
+        List<GameObject> objects= Algorithm.getObjectsByDistance(bot, ObjectTypes.GAS_CLOUD, Escape.gameState, false);
+        for (GameObject gascloud : objects) {
+            if (Algorithm.getDistanceBetween(bot, gascloud) < 5) {
+                return bot;
+            }
         }
         return null;
     } 
