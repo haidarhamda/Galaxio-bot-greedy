@@ -7,7 +7,7 @@ Program Ini Dibuat Untuk Memenuhi Tugas Perkuliahan Mata Kuliah Strategi Algorit
 Program Studi Teknik Informatika
 Sekolah Teknik Elektro dan Informatika
 Institut Teknologi Bandung
-Semester II Tahun 2021/2022
+Semester II Tahun 2022/2023
 
 ## General Information
 
