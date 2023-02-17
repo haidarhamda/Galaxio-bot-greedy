@@ -24,7 +24,7 @@ Ini merupakan program sederhana dalam Bahasa Java yang mengimplementasikan Algor
 
 ## Author
 
-Muhammad Farrel Danendra Rachim (13521048)
-Haidar Hamda (13521105)
-Reza Pahlevi Ubaidillah (13521165)
+- Muhammad Farrel Danendra Rachim (13521048)
+- Haidar Hamda (13521105)
+- Reza Pahlevi Ubaidillah (13521165)
 
