@@ -364,8 +364,6 @@ FodyWeavers.xsd
 
 **/*.iml
 
-**/target/
-
 # vcpkg
 *vcpkg/
 
