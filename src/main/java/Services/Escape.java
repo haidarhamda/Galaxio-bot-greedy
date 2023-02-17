@@ -88,7 +88,7 @@ public class Escape {
     private static GameObject detectGasCloud() {
         List<GameObject> objects= Algorithm.getObjectsByDistance(bot, ObjectTypes.GAS_CLOUD, Escape.gameState, false);
         for (GameObject gascloud : objects) {
-            if (Algorithm.getDistanceBetween(bot, gascloud) < 5) {
+            if (Algorithm.getDistanceBetween(bot, gascloud) < gascloud.getSize() + 50) {
                 return bot;
             }
         }
