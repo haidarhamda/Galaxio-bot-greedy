@@ -36,8 +36,6 @@ tersebut.
 2. Buka terminal di dalam folder hasil clone
 3. Jalankan perintah `mvn clean package`
 
-## Run Program
-
 ## Author
 
 - Muhammad Farrel Danendra Rachim (13521048)
