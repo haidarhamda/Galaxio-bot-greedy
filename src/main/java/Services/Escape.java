@@ -59,7 +59,7 @@ public class Escape {
 
     private static GameObject detectTorpedo() {
         List<GameObject> objects=gameState.gameObjects;
-        if (Algorithm.cekTorpedo(objects)) {
+        if (Algorithm.cekTorpedo(bot,objects,gameState)) {
             return bot;
         }
         return null;

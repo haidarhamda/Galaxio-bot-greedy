@@ -64,20 +64,26 @@ public class BotService {
 //                }
                 System.out.println("TICK "+gameState.world.getCurrentTick());
                 Chase.update(bot, gameState);
-                if(Chase.findChaseable() != null || Chase.findShootable() != null){
-                    System.out.println("CHASING");
-                    Chase.setAction();
-                    
-                    playerAction.heading = Chase.heading;
-                    if(Chase.playerAction!=null)
-                        playerAction.action = Chase.playerAction;
-                }
-                else{
-                    System.out.println("FETCHING");
-                    // Fetch fetch=new Fetch();
-                    Fetch.setAction(bot, gameState);
-                    playerAction.action = Fetch.playerAction;
-                    playerAction.heading = Fetch.heading;
+                if (!Algorithm.cekTorpedo(bot,gameState.getGameObjects(),gameState)|| (getNearestOtherBot().getSize()>bot.getSize()&&Algorithm.getDistanceBetween(bot.getPosition(),getNearestOtherBot().getPosition())<300)) {
+                    if (Chase.findChaseable() != null || Chase.findShootable() != null) {
+                        System.out.println("CHASING");
+                        Chase.setAction();
+
+                        playerAction.heading = Chase.heading;
+                        if (Chase.playerAction != null)
+                            playerAction.action = Chase.playerAction;
+                    } else {
+                        System.out.println("FETCHING");
+                        // Fetch fetch=new Fetch();
+                        Fetch.setAction(bot, gameState);
+                        playerAction.action = Fetch.playerAction;
+                        playerAction.heading = Fetch.heading;
+                    }
+                } else {
+                    System.out.println("ESCAPING");
+                    Escape.setAction(bot,gameState);
+                    playerAction.action=Escape.playerAction;
+                    playerAction.heading=Escape.heading;
                 }
                 // System.out.println(playerAction.heading);
 
