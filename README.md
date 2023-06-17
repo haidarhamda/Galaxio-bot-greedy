@@ -20,7 +20,7 @@ The goal of each player in the Galaxio game is to survive until they become the 
 1. Extract the starter pack into the desired folder.
 2. Clone this repository.
 3. Open the terminal inside the cloned folder.
-4. Run the command 'mvn clean package'.
+4. Run the command `mvn clean package`.
 5. Go to the starter-pack folder.
 6. Edit the run.bat file in the starter-pack folder if necessary, then run the .bat file.
 7. Once finished, click on Galaxio.exe in the visualizer folder to view the Galaxio game animation.
