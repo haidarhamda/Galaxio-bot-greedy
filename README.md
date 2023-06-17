@@ -1,29 +1,13 @@
-# Tubes1_ShotaLovers6969
-
-Pemanfaatan Algoritma Greedy dalam Aplikasi Permainan “Galaxio”
-
-Program Ini Dibuat Untuk Memenuhi Tugas Perkuliahan Mata Kuliah Strategi Algoritma (IF2211)
-
-Program Studi Teknik Informatika
-Sekolah Teknik Elektro dan Informatika
-Institut Teknologi Bandung
-Semester II Tahun 2022/2023
+Greedy implementation for bot in “Galaxio”
 
 ## General Information
 
-Galaxio adalah sebuah game battle royale yang mempertandingkan bot kapal anda dengan beberapa bot kapal yang lain. Setiap pemain akan memiliki sebuah bot kapal dan tujuan dari permainan adalah agar bot kapal anda yang tetap hidup hingga akhir permainan. Agar dapat memenangkan pertandingan, setiap bot harus mengimplementasikan strategi tertentu untuk dapat memenangkan permainan.
+Galaxio is a battle royale game that pits your ship bot against several other ship bots. Each player will have a ship bot, and the objective of the game is to keep your ship bot alive until the end. In order to win the match, each bot must implement specific strategies to secure victory in the game.
 
-
-Ini merupakan program sederhana dalam Bahasa Java yang mengimplementasikan Algoritma Greedy dalam Aplikasi Permainan “Galaxio”. Kami memilih tiga buah strategi algoritma yang digunakan berdasarkan prioritas: Escaping, Chasing, dan Fetching. Kapal akan berusaha "kabur" dari berbagai bahaya yang mengancam kapal tersebut. Jika bahaya hilang, barulah kapal kami mulai menyerang kapal lawan. Jika kapal kami dalam posisi yang menyusahkan (seperti ukuran yang lebih kecil dari kapal lawan) dan tidak ada bahaya pada tick tertentu, kapal akan berusaha melakukan feeding terhadap food sebanyak mungkin.
+This is a simple program in Java that implements the Greedy Algorithm in the "Galaxio" game application. We have chosen three algorithmic strategies based on priority: Escaping, Chasing, and Fetching. The ship will try to "escape" from various threats that endanger it. Once the danger is gone, our ship will start attacking enemy ships. If our ship is in a disadvantaged position (such as being smaller than the enemy ship) and there is no immediate danger on a given tick, the ship will attempt to feed on food as much as possible.
 
 ## Penjelasan Singkat Algoritma Greedy yang Diimplementasikan
-Tujuan dari setiap pemain dalam permainan Galaxio ini adalah untuk
-bertahan sampai menjadi pemain tersisa terakhir. Terdapat berbagai
-cara untuk menjadi pemain terakhir yang bersisa, seperti menembakin
-pemain lain, fokus mencari makan, dan lain lain. Dalam program ini,
-bot akan berfokus mencari makan, namun ketika terdapat pemain lain
-yang mungkin ditembak/dikejar, bot akan menembak/mengejar pamain
-tersebut.
+The goal of each player in the Galaxio game is to survive until they become the last remaining player. There are various ways to be the last survivor, such as shooting other players, focusing on finding food, and so on. In this program, the bot will focus on finding food, but when there are other players that can be shot or chased, the bot will shoot or chase those players.
 
 ## Prerequisites
 * Java versi 11 atau lebih
@@ -33,15 +17,15 @@ tersebut.
 * Download starter pack.zip Galaxio: https://github.com/EntelectChallenge/2021-Galaxio/releases/tag/2021.3.2
 
 ## Build and Run Program
-1. Extract starter pack tersebut di folder yang diinginkan
-2. Clone repository ini
-3. Buka terminal di dalam folder hasil clone
-4. Jalankan perintah `mvn clean package`
-5. Pergi ke folder starter-pack
-6. Edit file run.bat di folder starter-pack tersebut jika perlu, lalu run file .bat tersebut.
-7. Setelah selesai, klik Galaxio.exe di folder visualizer untuk melihat animasi game Galaxio tersebut.
-8. Load Game dengan file .json terbaru yang seharusnya sudah disediakan di autofill.
-9. Jalankan game.
+1. Extract the starter pack into the desired folder.
+2. Clone this repository.
+3. Open the terminal inside the cloned folder.
+4. Run the command 'mvn clean package'.
+5. Go to the starter-pack folder.
+6. Edit the run.bat file in the starter-pack folder if necessary, then run the .bat file.
+7. Once finished, click on Galaxio.exe in the visualizer folder to view the Galaxio game animation.
+8. Load the game with the latest .json file, which should be provided in the autofill.
+9. Start the game.
 
 
 ## Author
